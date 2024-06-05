@@ -1,6 +1,6 @@
 """
     Code to train ResNet18 without pre-trained weights on ImageNet data.
-    First, you need to download ImageNet data and place into dir: vision/vision/imagenet
+    First, you need to download ImageNet data and place into dir: data/imagenet
 """
 
 import os
@@ -21,8 +21,13 @@ from torchvision.datasets import ImageFolder
 
 def training_loop(model_architecture, dataset_selected):
     """
-        Description.
+    Main function to train a ResNet model on a selected dataset.
+
+    Args:
+    - model_architecture (str): The architecture of the ResNet model ('resnet18' or 'resnet50').
+    - dataset_selected (str): The dataset to use ('imagenet1k' or 'cifar10').
     """
+
     print(f"Start training {model_architecture} on {dataset_selected}.")
 
     # Check if CUDA is available and set the device to GPU if it is, otherwise use CPU
@@ -88,6 +93,21 @@ def training_loop(model_architecture, dataset_selected):
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 
     def train(model, loader, optimizer, criterion, epoch):
+        """
+        Train the model for one epoch.
+
+        Args:
+        - model (torch.nn.Module): The model to train.
+        - loader (DataLoader): DataLoader for the training data.
+        - optimizer (torch.optim.Optimizer): Optimizer for updating model weights.
+        - criterion (nn.Module): Loss function.
+        - epoch (int): The current epoch number.
+
+        Returns:
+        - average_loss (float): Average loss for the epoch.
+        - accuracy (float): Training accuracy for the epoch.
+        """
+
         model.train()  # Set model to training mode
         running_loss = 0.0
         total_loss = 0.0
@@ -133,6 +153,20 @@ def training_loop(model_architecture, dataset_selected):
         return average_loss, accuracy
 
     def validate(model, loader, criterion, epoch):
+        """
+        Validate the model for one epoch.
+
+        Args:
+        - model (torch.nn.Module): The model to validate.
+        - loader (DataLoader): DataLoader for the validation data.
+        - criterion (nn.Module): Loss function.
+        - epoch (int): The current epoch number.
+
+        Returns:
+        - average_loss (float): Average loss for the epoch.
+        - accuracy (float): Validation accuracy for the epoch.
+        """
+
         model.eval()  # Set model to evaluation mode
         running_loss = 0.0
         total_loss = 0.0
@@ -175,6 +209,18 @@ def training_loop(model_architecture, dataset_selected):
         return average_loss, accuracy
 
     def load_checkpoint(checkpoint_path, model, optimizer=None):
+        """
+        Load model and optimizer state from a checkpoint file.
+
+        Args:
+        - checkpoint_path (str): Path to the checkpoint file.
+        - model (torch.nn.Module): The model to load the state into.
+        - optimizer (torch.optim.Optimizer, optional): Optimizer to load the state into. Defaults to None.
+
+        Returns:
+        - int: The epoch number if available, otherwise None.
+        """
+
         if os.path.isfile(checkpoint_path):
             print(f"Loading checkpoint '{checkpoint_path}'")
             checkpoint = torch.load(checkpoint_path)
@@ -194,6 +240,14 @@ def training_loop(model_architecture, dataset_selected):
             return None
 
     def save_checkpoint(state, filename="checkpoint.pth.tar"):
+        """
+        Save the current state of the model and optimizer to a checkpoint file.
+
+        Args:
+        - state (dict): State to save, including model and optimizer state dictionaries.
+        - filename (str, optional): Name of the checkpoint file. Defaults to "checkpoint.pth.tar".
+        """
+
         filepath = os.path.join(os.getcwd(), 'vision', 'checkpoints', filename)
         try: 
             torch.save(state, filepath)
@@ -276,7 +330,7 @@ if __name__ == "__main__":
     # Variables
     model_architecture = "resnet50"
     dataset = "imagenet1k"
-    resume_from_checkpoint = None #'checkpoint_2024-03-25-21h21_epoch_17_train_200.pth.tar'  # None
+    resume_from_checkpoint = None # None or filename (e.g. 'checkpoint_2024-03-25-21h21_epoch_17_train_200.pth.tar')
 
     # Checks before start
     assert model_architecture in ["resnet18", "resnet50"]
