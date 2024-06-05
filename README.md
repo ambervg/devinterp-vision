@@ -49,6 +49,7 @@ Here you can provide instructions on how to use your project, including examples
 
 ## Project Structure
 
+```
 LLC-estimation-vision/
 ├── data/
 │ ├── imagenet/ # Training data images from ImageNet
@@ -62,7 +63,8 @@ LLC-estimation-vision/
 ├── venv/
 ├── README.md # Project documentation
 ├── requirements.txt # Python dependencies
+```
 
 ## Contact
 
-For questions or inquiries, please just shoot me a message through GitHub. I will keep my eyes open for them.
+For questions or inquiries, feel free to open up an issue.
