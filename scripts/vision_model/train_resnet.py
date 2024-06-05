@@ -22,7 +22,7 @@ from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import ImageFolder
 
 
-def training_loop(model_architecture, dataset_selected):
+def training_loop(model_architecture, dataset_selected, resume_from_checkpoint=None, wandb_logging=False):
     """
     Main function to train a ResNet model on a selected dataset.
 
@@ -38,17 +38,18 @@ def training_loop(model_architecture, dataset_selected):
     print(f"Training on device: {device}")
 
     # start a new wandb run to track this script
-    wandb.init(
-        # set the wandb project where this run will be logged
-        project="vision",
-        
-        # track hyperparameters and run metadata
-        config={
-        "learning_rate": 0.001,
-        "architecture": model_architecture,
-        "dataset": dataset_selected,
-        }
-    )
+    if wandb_logging:
+        wandb.init(
+            # set the wandb project where this run will be logged
+            project="vision",
+            
+            # track hyperparameters and run metadata
+            config={
+            "learning_rate": 0.001,
+            "architecture": model_architecture,
+            "dataset": dataset_selected,
+            }
+        )
 
     # Optional: Set a seed for reproducibility
     torch.manual_seed(46)
@@ -71,7 +72,7 @@ def training_loop(model_architecture, dataset_selected):
 
     # Load the entire dataset
     if dataset_selected == "imagenet1k":
-        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'data', 'imagenet', 'imagenet1k'), transform=transform)
+        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'data', 'imagenet1k'), transform=transform)
     elif dataset_selected == "cifar10":
         dataset = ImageFolder(root=os.path.join(os.getcwd(), 'data', 'cifar-10-python', 'cifar-10-batches-py'), transform=transform)
 
@@ -88,7 +89,7 @@ def training_loop(model_architecture, dataset_selected):
     # Logarithmic checkpoint taking
     num_epochs = 40  # guesstimate
     total_iterations = num_epochs * len(train_loader)
-    log_indices = np.unique(np.logspace(0, np.log10(total_iterations), num=100, dtype=np.int))
+    log_indices = np.unique(np.logspace(0, np.log10(total_iterations), num=100))  # dtype=np.int
 
     # Define Loss Function and Optimizer 
     criterion = nn.CrossEntropyLoss()
@@ -262,7 +263,7 @@ def training_loop(model_architecture, dataset_selected):
     # Optional resume from checkpoint
     if resume_from_checkpoint is not None:
         # checkpoint_filename = 'checkpoint_2024-03-25-11h29_epoch_13_train_200.pth.tar' # Enter the desired checkpoint file
-        checkpoint_path = os.path.join((os.getcwd), 'data', 'checkpoints', resume_from_checkpoint) 
+        checkpoint_path = os.path.join(os.getcwd(), 'data', 'checkpoints', resume_from_checkpoint) 
         start_epoch = load_checkpoint(checkpoint_path, model, optimizer)
         if start_epoch is not None:
             start_epoch += 1  # Start from the next epoch
@@ -310,8 +311,9 @@ def training_loop(model_architecture, dataset_selected):
                 Val Loss: {val_loss:.4f}, Val Accuracy: {val_accuracy:.2f}%, Learning Rate: {current_lr}')
         
         # Log metrics to wandb
-        wandb.log({"epoch": epoch+1, "acc_train": train_accuracy, "loss_train": train_loss,
-                    "acc_val": val_accuracy, "loss_val": val_loss, "lr": current_lr})
+        if wandb_logging:
+            wandb.log({"epoch": epoch+1, "acc_train": train_accuracy, "loss_train": train_loss,
+                        "acc_val": val_accuracy, "loss_val": val_loss, "lr": current_lr})
 
         # Save checkpoint
         save_checkpoint({
@@ -335,9 +337,10 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, required=True, choices=["resnet18", "resnet50"], help="Model architecture to use: 'resnet18' or 'resnet50'")
     parser.add_argument("--dataset", type=str, required=True, choices=["imagenet1k", "cifar10"], help="Dataset to use: 'imagenet1k' or 'cifar10'")
     parser.add_argument("--resume_from_checkpoint", type=str, default=None, help="Path to the checkpoint file to resume training from")
+    parser.add_argument("--wandb_logging", type=bool, default=False, help="Bool to log training process to wandb")
 
     # Parse the arguments
     args = parser.parse_args()
 
     # Begin training
-    training_loop(args.model_architecture, args.dataset, args.resume_from_checkpoint)
+    training_loop(args.model, args.dataset, args.resume_from_checkpoint, args.wandb_logging)

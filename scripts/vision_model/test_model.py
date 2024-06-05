@@ -1,13 +1,36 @@
-import torch
 import os
-# import pandas as pd
-# import matplotlib.pyplot as plt
+import torch
+import argparse
 import torchvision.models as models
 from torchvision.transforms import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import random_split, DataLoader
 
+
 def testing_loop(model_checkpoint_path, dataset_selected):
+    """
+    Evaluates the performance of a pre-trained ResNet model on a selected dataset.
+
+    Args:
+        model_checkpoint_path (str): The path to the model checkpoint file. If not None, the function loads the model weights from this checkpoint.
+        dataset_selected (str): The dataset to be used for evaluation. Supported values are 'imagenet1k' and 'cifar10'.
+
+    Returns:
+        float: The accuracy of the model on the validation set.
+
+    Steps:
+        1. Initializes the device to use GPU if available, otherwise CPU.
+        2. Instantiates a ResNet-18 model.
+        3. Loads the model weights from the checkpoint if provided.
+        4. Defines image transformations for preprocessing.
+        5. Loads the selected dataset (ImageNet or CIFAR-10).
+        6. Splits the dataset into training and validation sets.
+        7. Prints and saves the filenames of the images in the validation set.
+        8. Creates data loaders for training and validation datasets.
+        9. Defines a nested function to evaluate the model on the validation set.
+        10. Returns the accuracy of the model on the validation set.
+    """
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = models.resnet18(weights=None)  # Instantiate the model here
     
@@ -70,24 +93,16 @@ def testing_loop(model_checkpoint_path, dataset_selected):
     return test_model(model, val_loader)
 
 if __name__ == "__main__":
-    results = []  # List to hold seed and accuracy tuples
 
+    # Create the parser
+    parser = argparse.ArgumentParser(description="Train a ResNet model on a selected dataset.")
+    parser.add_argument("--model_checkpoint_path", type=str, required=True, choices=["resnet18", "resnet50"], help="Path to the checkpoint file to resume training from")
+    parser.add_argument("--dataset_selected", type=str, required=True, choices=["imagenet1k", "cifar10"], help="Dataset to use: 'imagenet1k' or 'cifar10'")
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Begin testing
     torch.manual_seed(45)  # For reproducibility
-    model_checkpoint_path = os.path.join("vision", "checkpoints", "checkpoint_2024-03-16-01h24_epoch_39_val_200.pth.tar")
-    dataset_selected = "imagenet1k"
-    
-    accuracy = testing_loop(model_checkpoint_path, dataset_selected)  # Get accuracy
-    print(accuracy)
-    # results.append((i, accuracy))  # Append seed and accuracy
-
-    # # Create DataFrame
-    # df = pd.DataFrame(results, columns=['Seed', 'Accuracy'])
-    
-    # # Plotting
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(df['Seed'], df['Accuracy'], marker='o')
-    # plt.title('Model Accuracy by Seed')
-    # plt.xlabel('Seed')
-    # plt.ylabel('Accuracy (%)')
-    # plt.grid(True)
-    # plt.show()
+    accuracy = testing_loop(args.model_checkpoint_path, args.dataset_selected)  # Get accuracy
+    print(f"Accuracy: {accuracy}")

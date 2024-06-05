@@ -37,29 +37,44 @@ Clone this repository and set up a virtual environment. Then, install the requir
 
 ## Usage
 
-Here you can provide instructions on how to use your project, including examples and explanations of the main functionalities.
+1. **Data Retrieval:** First we will need to retrieve the data for training the vision models. This could be (for example) data from ImageNet-1K or CIFAR-10.
+    - Download ImageNet-1k (e.g. 11GB from [this website](https://www.kaggle.com/datasets/vitaliykinakh/stable-imagenet1k?resource=download)) and save it in the `data/imagenet` directory.
+2. **Model Training and Checkpoint Generation:** Then, we will need to train a model and generate checkpoint during the training process. The scripts to do this are in the `scripts/vision_model` directory.
+    ```bash
+    python scripts/vision_model/train_resnet.py --model resnet18 --dataset imagenet --resume_from_checkpoint None
+    ```
+    -  Argument Options
+        - `--model_architecture`:
+            - Description: Specifies the architecture of the ResNet model to use. Choices: `resnet18`, `resnet50`
+            - Example: `--model_architecture resnet18`
+        - `--dataset`:
+            - Description: Specifies the dataset to use for training. Choices: `imagenet1k`, `cifar10`
+            - Example: `--dataset imagenet1k`
+        - `--resume_from_checkpoint` (optional):
+            - Description: Path to the checkpoint file to resume training from. If not specified, training will start from scratch.
+            - Default: `None`
+            - Example: `--resume_from_checkpoint checkpoints/checkpoint.pth.tar`
 
-1. **Data Retrieval:** Describe how to prepare and format the data for the vision models.
-2. **Model Training and Checkpoint Generation:**
-3. **Epsilon & Gamma Calibration:**
+3. **Epsilon & Gamma Calibration:** Next, 
     ```bash
     python blabla.py 
     ```
-4. **Plotting LLC Estimations:**
+4. **Plotting LLC Estimations:** Finally we can generate some plots 
 
 ## Project Structure
 
 ```
 LLC-estimation-vision/
 ├── data/
-│ ├── imagenet/ # Training data images from ImageNet
-│ └── cifar10-python/ # Training data images from Cifar10
+│ ├── imagenet1k/ # Training data images from ImageNet
+│ ├── cifar10-python/ # Training data images from Cifar10
+│ └── checkpoints/  # Save generated checkpoints here unless other location specified
 ├── results/ # Output results and visualizations
 │ ├── llc_estimations/
 │ └── llc_plots/
 ├── scripts/
-│ ├── LLC_estimation/ # All scripts related to estimating and plotting LLC
-│ └── vision_model/ # All scripts related to training/evaluating models and creating checkpoints 
+│ ├── LLC_estimation/ # Scripts related to estimating and plotting LLC
+│ └── vision_model/ # Scripts related to training/evaluating models and creating checkpoints 
 ├── venv/
 ├── README.md # Project documentation
 ├── requirements.txt # Python dependencies
@@ -67,4 +82,4 @@ LLC-estimation-vision/
 
 ## Contact
 
-For questions or inquiries, feel free to open up an issue.
+For questions or inquiries, feel free to open up an issue. 😄👍
