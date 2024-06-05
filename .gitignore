@@ -2,9 +2,12 @@ LLC_estimation_vision.egg-info/
 
 data/imagenet1k/*
 data/checkpoints/*
-!data/checkpoints/.gitkeep  # do keep the main folder
+!data/checkpoints/.gitkeep
 
-results/*
+results/llc_estimations/*
+results/llc_plots/*
+!results/llc_estimations/.gitkeep
+!results/llc_plots/.gitkeep
 
 venv/
 wandb/
