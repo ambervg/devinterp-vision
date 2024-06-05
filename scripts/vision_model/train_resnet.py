@@ -68,9 +68,9 @@ def training_loop(model_architecture, dataset_selected):
 
     # Load the entire dataset
     if dataset_selected == "imagenet1k":
-        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'vision', 'imagenet', 'imagenet1k'), transform=transform)
+        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'data', 'imagenet', 'imagenet1k'), transform=transform)
     elif dataset_selected == "cifar10":
-        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'vision', 'cifar-10-python', 'cifar-10-batches-py'), transform=transform)
+        dataset = ImageFolder(root=os.path.join(os.getcwd(), 'data', 'cifar-10-python', 'cifar-10-batches-py'), transform=transform)
 
     # Split the dataset
     total_size = len(dataset)
@@ -248,7 +248,7 @@ def training_loop(model_architecture, dataset_selected):
         - filename (str, optional): Name of the checkpoint file. Defaults to "checkpoint.pth.tar".
         """
 
-        filepath = os.path.join(os.getcwd(), 'vision', 'checkpoints', filename)
+        filepath = os.path.join(os.getcwd(), 'data', 'checkpoints', filename)
         try: 
             torch.save(state, filepath)
             print(f"Checkpoint saved to '{filepath}'")
@@ -259,7 +259,7 @@ def training_loop(model_architecture, dataset_selected):
     # Optional resume from checkpoint
     if resume_from_checkpoint is not None:
         # checkpoint_filename = 'checkpoint_2024-03-25-11h29_epoch_13_train_200.pth.tar' # Enter the desired checkpoint file
-        checkpoint_path = os.path.join((os.getcwd), 'vision', 'checkpoints', resume_from_checkpoint) 
+        checkpoint_path = os.path.join((os.getcwd), 'data', 'checkpoints', resume_from_checkpoint) 
         start_epoch = load_checkpoint(checkpoint_path, model, optimizer)
         if start_epoch is not None:
             start_epoch += 1  # Start from the next epoch
