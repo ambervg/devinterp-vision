@@ -2,6 +2,7 @@ LLC_estimation_vision.egg-info/
 
 data/imagenet1k/*
 data/checkpoints/*
+!data/checkpoints/.gitkeep  # do keep the main folder
 
 results/*
 
