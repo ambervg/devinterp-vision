@@ -56,18 +56,19 @@ This repository contains the code and resources for analyzing the developmental 
         - Example: `--resume_from_checkpoint checkpoints/checkpoint.pth.tar`
 
 3. **Epsilon & Gamma Calibration:** 
-- ⚖️ **Step 3A**: Compare the MALA Acceptence Rates for multiple epsilon-gamma combos
+    
+    ⚖️ **Step 3A**: Compare the MALA Acceptence Rates for multiple epsilon-gamma combos
     ```bash
     python scripts/LLC_estimation/epsilon_gamma_calibration.py --model resnet18 --checkpoint data/checkpoints/checkpoint_2024-03-16-01h24_epoch_39_val_200.pth.tar --step 1
     ```
-- 🧹 **Step 3B**: Pick a single value for epsilon and gamma, based on:
+    🧹 **Step 3B**: Pick a single value for epsilon and gamma, based on:
         - MALA Acceptance Rate: Generally, the best option is to pick the highest one.
         - Calibration sweep showing the LLC over time for the trained ResNet18 model given different values for epsilon (learning rate) and gamma (localization): Ensure there are no large peaks.
     ```bash
     # Now, plot a curve of your favourite. Fill in the --epsilon and --gamma accordingly.
     python scripts/LLC_estimation/epsilon_gamma_calibration.py --model resnet18 --checkpoint data/checkpoints/checkpoint_2024-03-16-01h24_epoch_39_val_200.pth.tar --step 2 --epsilon 0.01 --gamma 100
     ```
-- ⛓️ **Step 3C**: Do the same but now for multiple chains (default: 5 chains).
+    ⛓️ **Step 3C**: Do the same but now for multiple chains (default: 5 chains).
     ```bash
     python scripts/LLC_estimation/epsilon_gamma_calibration.py --model resnet18 --checkpoint data/checkpoints/checkpoint_2024-03-16-01h24_epoch_39_val_200.pth.tar --step 3 --epsilon 0.01 --gamma 100
     ```
