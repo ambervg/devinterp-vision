@@ -11,7 +11,6 @@ def plot_graph(dir, title=""):
 
     # Loop over results
     for filename in os.listdir(dir):
-        print(filename)
         # We only want to check the json files in this dir
         if not filename.endswith(".json"):
             continue
@@ -19,20 +18,19 @@ def plot_graph(dir, title=""):
         # read file
         with open(os.path.join(dir, filename), 'r') as file:
             result = json.load(file)
-        
-        # get the mean from the last 100 values, determined based on visual inspection
-        means = result["llc/means"]
-        mean_last_100 = np.mean(means[-100:])
-        mean_dict[filename] = mean_last_100
 
-        print(mean_last_100)
+        # Get theavg of the final values of moving_avg 
+        final_values = [value[-1] for value in result['llc/moving_avg']]
+        average_final_value = np.mean(final_values)
+        mean_dict[filename] = average_final_value
     
     print(f"{len(mean_dict)}")
+
+    # Sort chronologically so it's in the order of training step
     sorted_dict = {key: mean_dict[key] for key in sorted(mean_dict)}
-    print(sorted_dict.keys())
     print(f"Amount of checkpoints: {len(sorted_dict.values())}")
 
-    # # stds = result["llc/stds"]
+    stds = result["llc/stds"]
     sgld_steps = list(range(len(mean_dict)))
     axs.plot(
         sgld_steps,
@@ -43,9 +41,7 @@ def plot_graph(dir, title=""):
         label=f"llc",
         zorder=3,
     )
-    # # axs.fill_between(
-    # #     sgld_steps, means - stds, means + stds, color=llc_color, alpha=0.3, zorder=2
-    # # )
+    # axs.fill_between(sgld_steps, means - stds, means + stds, color=llc_color, alpha=0.3, zorder=2)
 
     # Set x-axis to logarithmic scale
     # axs.set_xscale("log")
@@ -59,8 +55,14 @@ def plot_graph(dir, title=""):
     axs.set_ylabel("llc")
     fig.suptitle(title, fontsize=16)
     plt.tight_layout()
+
+    # Save the plot as a PNG file
+    plt.savefig(os.path.join("results", "llc_plots", "llc_plot_over_checkpoints.png"))
+
+    # Show the plot
     plt.show()
 
+
 if __name__ == "__main__":
-    dir = "/media/amber/Elements/2024/Athena Program - checkpoints/llc_results-resnet18-imagenet1k-v2_epsilon001_gamma100_only_means"
-    plot_graph(dir, title="")
+    dir = "results/llc_estimations"
+    plot_graph(dir, title="LLC plot over checkpoints")
