@@ -6,14 +6,17 @@
 import os
 import wandb
 import random
+import argparse
 import numpy as np
 from datetime import datetime
 
 import torch
 import torchvision
-import torchvision.transforms as transforms
+
 import torch.nn as nn
 import torch.optim as optim
+import torchvision.transforms as transforms
+
 from torchvision import datasets, models
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import ImageFolder
@@ -327,14 +330,14 @@ def training_loop(model_architecture, dataset_selected):
 
 if __name__ == "__main__":
 
-    # Variables
-    model_architecture = "resnet50"
-    dataset = "imagenet1k"
-    resume_from_checkpoint = None # None or filename (e.g. 'checkpoint_2024-03-25-21h21_epoch_17_train_200.pth.tar')
+    # Create the parser
+    parser = argparse.ArgumentParser(description="Train a ResNet model on a selected dataset.")
+    parser.add_argument("--model", type=str, required=True, choices=["resnet18", "resnet50"], help="Model architecture to use: 'resnet18' or 'resnet50'")
+    parser.add_argument("--dataset", type=str, required=True, choices=["imagenet1k", "cifar10"], help="Dataset to use: 'imagenet1k' or 'cifar10'")
+    parser.add_argument("--resume_from_checkpoint", type=str, default=None, help="Path to the checkpoint file to resume training from")
 
-    # Checks before start
-    assert model_architecture in ["resnet18", "resnet50"]
-    assert dataset in ["imagenet1k", "cifar10"]
+    # Parse the arguments
+    args = parser.parse_args()
 
     # Begin training
-    training_loop(model_architecture, dataset)
+    training_loop(args.model_architecture, args.dataset, args.resume_from_checkpoint)
