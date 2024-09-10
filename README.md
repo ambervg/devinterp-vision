@@ -2,9 +2,9 @@
 [![python](https://img.shields.io/badge/Python-3.9-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![pytorch](https://img.shields.io/badge/PyTorch-2.3.0-EE4C2C.svg?style=flat&logo=pytorch)](https://pytorch.org)
 
-Repository for research on vision models performed together with [Timaeus](https://timaeus.co/) as part of the [Athena Research Program](https://researchathena.org/). This project focuses on the [Developmental Interpretability](https://medium.com/@groenestijnamber/12-developmental-interpretability-eca2f3d5ec80) of Deep Neural Networks (DNNs) for vision models, specifically examining the LLC estimation of these models over their training checkpoints.
+This project focuses on the [Developmental Interpretability](https://medium.com/@groenestijnamber/12-developmental-interpretability-eca2f3d5ec80) of Deep Neural Networks (DNNs) for vision models, specifically tracking the Local Learning Coefficient (LLC) estimation. The LLC is a principled measure of model complexity over time, which we can use to track the formation of structure in vision models during their training. This repository contains the code and resources for analyzing this behavior. The main goal is to estimate the LLC over various checkpoints created during the training process of these models.
 
-This repository contains the code and resources for analyzing the developmental interpretability of vision models. The main goal is to estimate the Local Learning Coefficients (LLC) over various checkpoints created during the training process of these models.
+Repository for research on vision models performed together with [Timaeus](https://timaeus.co/) as part of the [Athena Research Program](https://researchathena.org/). 
 
 ## 📋 Table of Contents 
 
@@ -54,8 +54,8 @@ This repository contains the code and resources for analyzing the developmental 
     --step 1
     ```
     🧹 **Step 3B**: Pick a single value for epsilon and gamma, based on:
-        - MALA Acceptance Rate: Generally, the best option is to pick the highest one.
-        - Calibration sweep showing the LLC over time for the trained ResNet18 model given different values for epsilon (learning rate) and gamma (localization): Ensure there are no large peaks.
+    - MALA Acceptance Rate: Generally, the best option is to pick the highest one. [Furman & Lau (2024)](https://arxiv.org/abs/2402.03698) recommend calibrating epsilon and gamma to reach a MALA acceptance rate of 0.90.
+    - Calibration sweep showing the LLC over time for the trained ResNet18 model given different values for epsilon (learning rate) and gamma (localization).
     ```bash
     # Now, plot a curve of your favourite. Fill in the --epsilon and --gamma accordingly.
     
